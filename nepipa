@@ -1,0 +1,104 @@
+#!/usr/bin/env python3
+
+
+# IMPORTS
+from typing import Optional
+import os
+
+
+# FUNCTIONS
+def sh(cmd):
+    import subprocess
+
+    return subprocess.getstatusoutput(cmd)
+
+def get_arg_from_file(path: str, splitter: str) -> Optional[str]:
+    if not os.path.exists(path):
+        return None
+    
+    try:
+        with open(path, 'r') as f:
+            for line in f.readlines():
+                if splitter in line:
+                    return line.split(splitter)[1].strip()
+    except Exception as e:
+        print(e)
+        return None
+    
+    return None
+
+def get_git_username() -> Optional[str]:
+    home_dir = sh('echo $HOME')[1].strip()
+    global_gitconfig_path = os.path.join(home_dir, '.gitconfig')
+    local_gitconfig_path = os.path.join(os.getcwd(), '.git/config')
+    splitter = 'name = '
+
+    return get_arg_from_file(local_gitconfig_path, splitter) or get_arg_from_file(global_gitconfig_path, splitter)
+
+def get_git_url() -> Optional[str]:
+    local_gitconfig_path = os.path.join(os.getcwd(), '.git/config')
+    splitter = 'url = '
+
+    url = get_arg_from_file(local_gitconfig_path, splitter)
+
+    if url is None:
+        return None
+    
+    return url.replace('.git', '').strip('/')
+
+
+# FLOW
+input('Current path: ' + os.getcwd() + '\nPlease ensure you\'re in the correct folder ')
+setuppy_path = os.path.join(os.getcwd(), 'setup.py')
+if os.path.exists(setuppy_path):
+    resp = input('setup.py already exists, this will overwrite it. Press \'y\' to proceed: ')
+
+    if resp.lower() != 'y':
+        exit(0)
+
+git_username = get_git_username()
+git_url = get_git_url()
+repo_name = git_url.split('/')[-1]
+
+tab = '    '
+setuppy = 'import setuptools\n\n'
+
+readme_file_name = 'README.md'
+readme_file_path = os.path.join(os.getcwd(), readme_file_name)
+has_readme = os.path.exists(readme_file_path)
+
+if has_readme:
+    setuppy += 'with open("README.md", "r") as f:\n' + tab + 'long_description = f.read()\n\n'
+
+setuppy += 'setuptools.setup('
+setuppy += '\n' + tab + 'name="' + repo_name + '",'
+setuppy += '\n' + tab + 'version="0.0.1",'
+setuppy += '\n' + tab + 'author="' + git_username + '",'
+setuppy += '\n' + tab + 'description="' + repo_name + '",'
+
+long_description = '"#' + repo_name + ""
+if has_readme:
+    long_description = 'long_description'
+setuppy += '\n' + tab + 'long_description=' + long_description + ','
+
+setuppy += '\n' + tab + 'long_description_content_type="text/markdown",'
+setuppy += '\n' + tab + 'url="' + git_url + '",'
+setuppy += '\n' + tab + 'packages=setuptools.find_packages(),'
+setuppy += '\n' + tab + 'install_requires=[],'
+setuppy += '\n' + tab + 'classifiers=['
+setuppy += '\n' + 2*tab + '"Programming Language :: Python :: 3",'
+setuppy += '\n' + 2*tab + '"License :: OSI Approved :: MIT License",'
+setuppy += '\n' + 2*tab + '"Operating System :: OS Independent",'
+setuppy += '\n' + tab + '],'
+setuppy += '\n' + tab + 'python_requires=\'>=3.5\','
+setuppy += '\n)'
+
+with open(setuppy_path, 'w') as f:
+    f.write(setuppy)
+
+package_path = os.path.join(os.getcwd(), repo_name)
+initpy_path = os.path.join(package_path, '__init__.py')
+os.makedirs(os.path.join(os.getcwd(), repo_name), exist_ok = True)
+
+if not os.path.exists(initpy_path):
+    open(initpy_path, 'a').close()
