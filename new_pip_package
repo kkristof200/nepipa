@@ -77,6 +77,7 @@ if len(user_defined_package_name) == 0:
 
 readme_file_path = os.path.join(os.getcwd(), README_FILE_NAME)
 has_readme = os.path.exists(readme_file_path)
+description = None
 
 # README
 if has_readme:
@@ -103,6 +104,8 @@ if not has_readme:
 
     description = input('Enter description of package: ')
     readme += '\n\n' + '## Description' + '\n' + description + '\n'
+    if len(description) == 0:
+        description = None
     
     readme += '\n' + '## Install'
     readme += '\n' + '~~~~bash'
@@ -122,13 +125,13 @@ setuppy += 'if os.path.exists(os.path.join(os.getcwd(), ' + README_FILE_NAME + '
 setuppy += '\n' + tab + 'with open("README.md", "r") as f:'
 setuppy += '\n' + tab*2 + 'long_description = f.read()'
 setuppy += '\n' + tab + 'else:'
-setuppy += '\n' + tab*2 + 'long_description = \'' + repo_name + '\''
+setuppy += '\n' + tab*2 + 'long_description = \'' + user_defined_package_name + '\''
 
 setuppy += 'setuptools.setup('
-setuppy += '\n' + tab + 'name="' + repo_name + '",'
+setuppy += '\n' + tab + 'name="' + user_defined_package_name + '",'
 setuppy += '\n' + tab + 'version="0.0.1",'
 setuppy += '\n' + tab + 'author="' + git_username + '",'
-setuppy += '\n' + tab + 'description="' + repo_name + '",'
+setuppy += '\n' + tab + 'description="' + description or user_defined_package_name + '",'
 
 setuppy += '\n' + tab + 'long_description=long_description,'
 setuppy += '\n' + tab + 'long_description_content_type="text/markdown",'
@@ -146,9 +149,9 @@ setuppy += '\n)'
 with open(setuppy_path, 'w') as f:
     f.write(setuppy)
 
-package_path = os.path.join(os.getcwd(), repo_name)
+package_path = os.path.join(os.getcwd(), user_defined_package_name)
 initpy_path = os.path.join(package_path, '__init__.py')
-os.makedirs(os.path.join(os.getcwd(), repo_name), exist_ok = True)
+os.makedirs(package_path, exist_ok = True)
 
 if not os.path.exists(initpy_path):
     open(initpy_path, 'a').close()
