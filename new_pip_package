@@ -6,6 +6,12 @@ from typing import Optional
 import os
 
 
+# DEFINES
+MIN_PYTHON_VERSION = 3.5
+MAX_PYTHON_VERSION = 3.7
+README_FILE_NAME = 'README.md'
+
+
 # FUNCTIONS
 def sh(cmd):
     import subprocess
@@ -61,14 +67,61 @@ git_url = get_git_url()
 repo_name = git_url.split('/')[-1]
 
 tab = '    '
-setuppy = 'import setuptools\n\n'
+setuppy = 'import setuptools, os\n\n'
 
-readme_file_name = 'README.md'
-readme_file_path = os.path.join(os.getcwd(), readme_file_name)
+user_defined_package_name = input('Suggested package name: ' + repo_name + '\n\nIf you wish to override package name enter here, or just simply press enter, to leave the default value: ')
+
+if len(user_defined_package_name) == 0:
+    user_defined_package_name = repo_name
+
+readme_file_path = os.path.join(os.getcwd(), README_FILE_NAME)
 has_readme = os.path.exists(readme_file_path)
 
+# README
 if has_readme:
-    setuppy += 'with open("README.md", "r") as f:\n' + tab + 'long_description = f.read()\n\n'
+    with open(readme_file_path, 'r') as f:
+        readme = f.read().replace('#', '').strip()
+
+        if readme == repo_name or readme == user_defined_package_name:
+            has_readme = False
+
+if not has_readme:
+    _version = MIN_PYTHON_VERSION
+    _version_str = ''
+    
+    while _version <= MAX_PYTHON_VERSION:
+        if len(_version_str) > 0:
+            _version_str += '%20|'
+        
+        _version_str += str(_version)
+        _version += 0.1
+
+    readme = '# ' + user_defined_package_name
+    readme += '\n' + '![python_version](https://img.shields.io/static/v1?label=Python&message=' + _version + '&color=blue)'
+    readme += '[![PyPI downloads/month](https://img.shields.io/pypi/dm/' + user_defined_package_name + '?logo=pypi&logoColor=white)](https://pypi.python.org/pypi/' + user_defined_package_name + ')'
+
+    description = input('Enter description of package: ')
+    readme += '\n\n' + '## Description' + '\n' + description + '\n'
+    
+    readme += '\n' + '## Install'
+    readme += '\n' + '~~~~bash'
+    readme += '\n' + 'pip install ' + user_defined_package_name
+    readme += '\n' + '# or'
+    readme += '\n' + 'pip3 install ' + user_defined_package_name
+    readme += '\n' + '~~~~'
+
+    # UNCOMMENT TO ADD USAGE IN README
+    # readme += '\n\n' + '## Usage' + '\nFILL_IN' + '\n'
+
+    with open(readme_file_path, 'w') as f:
+        f.write(readme)
+
+# SETUP.PY
+setuppy += 'if os.path.exists(os.path.join(os.getcwd(), ' + README_FILE_NAME + ')):'
+setuppy += '\n' + tab + 'with open("README.md", "r") as f:'
+setuppy += '\n' + tab*2 + 'long_description = f.read()'
+setuppy += '\n' + tab + 'else:'
+setuppy += '\n' + tab*2 + 'long_description = \'' + repo_name + '\''
 
 setuppy += 'setuptools.setup('
 setuppy += '\n' + tab + 'name="' + repo_name + '",'
@@ -76,11 +129,7 @@ setuppy += '\n' + tab + 'version="0.0.1",'
 setuppy += '\n' + tab + 'author="' + git_username + '",'
 setuppy += '\n' + tab + 'description="' + repo_name + '",'
 
-long_description = '"#' + repo_name + ""
-if has_readme:
-    long_description = 'long_description'
-setuppy += '\n' + tab + 'long_description=' + long_description + ','
-
+setuppy += '\n' + tab + 'long_description=long_description,'
 setuppy += '\n' + tab + 'long_description_content_type="text/markdown",'
 setuppy += '\n' + tab + 'url="' + git_url + '",'
 setuppy += '\n' + tab + 'packages=setuptools.find_packages(),'
