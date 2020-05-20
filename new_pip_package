@@ -93,7 +93,7 @@ if not has_readme:
     
     while _version <= MAX_PYTHON_VERSION:
         if len(_version_str) > 0:
-            _version_str += '%20|'
+            _version_str += '%20|%20'
         
         _version_str += str(_version)
         _version += 0.1
