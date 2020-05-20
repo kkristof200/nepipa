@@ -139,7 +139,7 @@ setuppy += '\n' + 2*tab + '"Programming Language :: Python :: 3",'
 setuppy += '\n' + 2*tab + '"License :: OSI Approved :: MIT License",'
 setuppy += '\n' + 2*tab + '"Operating System :: OS Independent",'
 setuppy += '\n' + tab + '],'
-setuppy += '\n' + tab + 'python_requires=\'>=3.5\','
+setuppy += '\n' + tab + 'python_requires=\'>=' + str(MIN_PYTHON_VERSION) + '\','
 setuppy += '\n)'
 
 with open(setuppy_path, 'w') as f:
