@@ -153,11 +153,15 @@ with open(setuppy_path, 'w') as f:
     f.write(setuppy)
 
 package_path = os.path.join(os.getcwd(), user_defined_package_name)
+mainpy_path = os.path.join(package_path, user_defined_package_name + '.py')
 initpy_path = os.path.join(package_path, '__init__.py')
 os.makedirs(package_path, exist_ok = True)
 
 if not os.path.exists(initpy_path):
     open(initpy_path, 'a').close()
+
+if not os.path.exists(mainpy_path):
+    open(mainpy_path, 'a').close()
 
 if DEMO_FILE_NAME is not None:
     open(os.path.join(os.getcwd(), DEMO_FILE_NAME), 'w').close()
