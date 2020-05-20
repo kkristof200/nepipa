@@ -124,14 +124,15 @@ if not has_readme:
 setuppy += 'if os.path.exists(os.path.join(os.getcwd(), ' + README_FILE_NAME + ')):'
 setuppy += '\n' + tab + 'with open("README.md", "r") as f:'
 setuppy += '\n' + tab*2 + 'long_description = f.read()'
-setuppy += '\n' + tab + 'else:'
-setuppy += '\n' + tab*2 + 'long_description = \'' + user_defined_package_name + '\''
+setuppy += tab + 'else:'
+setuppy += '\n' + tab + 'long_description = \'' + user_defined_package_name + '\''
 
+setuppy += '\n\n'
 setuppy += 'setuptools.setup('
 setuppy += '\n' + tab + 'name="' + user_defined_package_name + '",'
 setuppy += '\n' + tab + 'version="0.0.1",'
 setuppy += '\n' + tab + 'author="' + git_username + '",'
-setuppy += '\n' + tab + 'description="' + description or user_defined_package_name + '",'
+setuppy += '\n' + tab + 'description="' + (description or user_defined_package_name) + '",'
 
 setuppy += '\n' + tab + 'long_description=long_description,'
 setuppy += '\n' + tab + 'long_description_content_type="text/markdown",'
