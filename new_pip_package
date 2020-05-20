@@ -121,8 +121,10 @@ if not has_readme:
         f.write(readme)
 
 # SETUP.PY
-setuppy += 'if os.path.exists(os.path.join(os.getcwd(), ' + README_FILE_NAME + ')):'
-setuppy += '\n' + tab + 'with open("README.md", "r") as f:'
+setuppy += 'readme_path = os.path.join(os.getcwd(), "' + README_FILE_NAME + '")'
+setuppy += '\n'
+setuppy += 'if os.path.exists(readme_path):'
+setuppy += '\n' + tab + 'with open(readme_path, "r") as f:'
 setuppy += '\n' + tab*2 + 'long_description = f.read()'
 setuppy += tab + 'else:'
 setuppy += '\n' + tab + 'long_description = \'' + user_defined_package_name + '\''
