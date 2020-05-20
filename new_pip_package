@@ -98,7 +98,7 @@ if not has_readme:
         _version += 0.1
 
     readme = '# ' + user_defined_package_name
-    readme += '\n' + '![python_version](https://img.shields.io/static/v1?label=Python&message=' + _version + '&color=blue)'
+    readme += '\n' + '![python_version](https://img.shields.io/static/v1?label=Python&message=' + _version_str + '&color=blue)'
     readme += '[![PyPI downloads/month](https://img.shields.io/pypi/dm/' + user_defined_package_name + '?logo=pypi&logoColor=white)](https://pypi.python.org/pypi/' + user_defined_package_name + ')'
 
     description = input('Enter description of package: ')
