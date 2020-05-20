@@ -10,6 +10,7 @@ import os
 MIN_PYTHON_VERSION = 3.5
 MAX_PYTHON_VERSION = 3.7
 README_FILE_NAME = 'README.md'
+DEMO_FILE_NAME = 'demo.py' # if is set to None, no demo file will be created
 
 
 # FUNCTIONS
@@ -151,3 +152,6 @@ os.makedirs(os.path.join(os.getcwd(), repo_name), exist_ok = True)
 
 if not os.path.exists(initpy_path):
     open(initpy_path, 'a').close()
+
+if DEMO_FILE_NAME is not None:
+    open(os.path.join(os.getcwd(), DEMO_FILE_NAME), 'w').close()
